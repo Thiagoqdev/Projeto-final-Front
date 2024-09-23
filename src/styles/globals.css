@@ -105,3 +105,36 @@ a {
     color-scheme: dark;
   }
 }
+
+.container {
+  background-color: #333;
+  color: #fff;
+}
+
+.list-group-item {
+  background-color: #444;
+  color: #fff;
+}
+
+.btn-primary {
+  background-color: #555;
+  border-color: #555;
+}
+
+.btn-secondary, .btn-warning, .btn-danger, .btn-info {
+  color: #fff;
+
+}
+
+body {
+  background-color: #121212; /* Azul escuro */
+  color: #ffffff;
+}
+
+.navbar-dark .navbar-nav .nav-link {
+  color: #b0c4de; /* Azul claro */
+}
+
+.navbar-dark .navbar-nav .nav-link:hover {
+  color: #ffffff;
+}
