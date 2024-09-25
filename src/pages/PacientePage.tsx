@@ -1,36 +1,55 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import NavBar from '../components/NavBar';
-import PacientesTable from '../components/PacientesTable';
-import PacienteModal from '../components/PacienteModal';
-import { Button } from 'react-bootstrap';
-import PacienteDetalhesModal from '../components/PacienteDetalhesModal';
-import { Paciente } from '../types/types';
 
-// Generalizando o tipo de evento para cobrir todos os tipos de elementos de formulário
+interface Paciente {
+  nome: string;
+  telefone: string;
+  dataDaConsulta: string;
+  categoria?: string;
+  valorDaSessao?: number;
+  quantidadeDeSessao?: number;
+  valorTotal?: number;
+  desconto?: number;
+  valorPago?: number;
+  vencimento?: string;
+  situacaoFinanceira?: string;
+}
+
 type FormControlElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 
 const PacientePage: React.FC = () => {
-  const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [pacienteEditando, setPacienteEditando] = useState<Paciente | null>(null);
-  const [pacienteDetalhes, setPacienteDetalhes] = useState<Paciente | null>(null);
+  const [pacientes, setPacientes] = useState<Paciente[]>([]);
   const [novoPaciente, setNovoPaciente] = useState<Paciente>({
     nome: '',
-    dataConsulta: '',
     telefone: '',
-    formaPagamento: 'mensal',
+    dataDaConsulta: '',
+    categoria: 'Mensal',
+    valorDaSessao: 0,
+    quantidadeDeSessao: 0,
+    valorTotal: 0,
+    desconto: 0,
+    valorPago: 0,
+    vencimento: '',
+    situacaoFinanceira: '',
   });
+  const [pacienteEditando, setPacienteEditando] = useState<Paciente | null>(null);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [pacienteDetalhes, setPacienteDetalhes] = useState<Paciente | null>(null);
 
   useEffect(() => {
-    // Consumir API para listar pacientes
-    axios.get('http://localhost:5228/Cliente/TabelaSimples')
-      .then(response => setPacientes(response.data))
-      .catch(error => console.error(error));
+    const fetchPacientes = async () => {
+      try {
+        const response = await axios.get<Paciente[]>('http://localhost:5228/Cliente/TabelaSimples');
+        setPacientes(response.data);
+      } catch (error: any) {
+        console.error('Erro ao buscar pacientes:', error.message);
+      }
+    };
+    fetchPacientes();
   }, []);
 
-  // Generalizando o tipo de evento para cobrir todos os tipos de elementos de formulário
   const handleInputChange = (e: React.ChangeEvent<FormControlElement>) => {
     const { name, value } = e.target;
     if (pacienteEditando) {
@@ -40,90 +59,146 @@ const PacientePage: React.FC = () => {
     }
   };
 
-  const handleAddPaciente = () => {
-    // Lógica para adicionar paciente via API
-    axios.post('http://localhost:5228/Cliente/AdicionarCliente', novoPaciente)
-      .then(response => {
-        setPacientes([...pacientes, response.data]);
-        setShowModal(false);
-      })
-      .catch(error => console.error(error));
+  const handleAddPaciente = async () => {
+    try {
+      await axios.post('http://localhost:5228/Cliente/AdicionarCliente', novoPaciente);
+      setPacientes([...pacientes, novoPaciente]);
+      setNovoPaciente({
+        nome: '',
+        telefone: '',
+        dataDaConsulta: '',
+        categoria: 'Mensal',
+        valorDaSessao: 0,
+        quantidadeDeSessao: 0,
+        valorTotal: 0,
+        desconto: 0,
+        valorPago: 0,
+        vencimento: '',
+        situacaoFinanceira: '',
+      });
+      setShowModal(false);
+    } catch (error) {
+      console.error('Erro ao adicionar novo paciente:', error);
+    }
   };
 
   const handleEditPaciente = (index: number) => {
+    setEditIndex(index);
     setPacienteEditando(pacientes[index]);
     setShowEditModal(true);
   };
 
-  const handleSaveEditPaciente = () => {
-    if (pacienteEditando) {
-      // Lógica para atualizar paciente via API
-      axios.put(`http://localhost:5228/Cliente/AtualizarCliente?id=${pacienteEditando.clienteId}`, pacienteEditando)
-        .then(() => {
-          const updatedPacientes = pacientes.map(p => p.clienteId === pacienteEditando.clienteId ? pacienteEditando : p);
-          setPacientes(updatedPacientes);
-          setShowEditModal(false);
-        })
-        .catch(error => console.error(error));
+  const handleSaveEditPaciente = async () => {
+    if (editIndex !== null && pacienteEditando) {
+      try {
+        await axios.put(`http://localhost:5228/Cliente/AtualizarCliente?id=${pacientes[editIndex].nome}`, pacienteEditando);
+        const updatedPacientes = [...pacientes];
+        updatedPacientes[editIndex] = pacienteEditando;
+        setPacientes(updatedPacientes);
+        setShowEditModal(false);
+      } catch (error) {
+        console.error('Erro ao atualizar paciente:', error);
+      }
     }
   };
 
-  const handleDeletePaciente = (index: number) => {
-    const paciente = pacientes[index];
-    // Lógica para deletar paciente via API
-    axios.delete(`http://localhost:5228/Cliente/RemoverCliente?nome=${paciente.nome}`)
-      .then(() => {
-        setPacientes(pacientes.filter((_, i) => i !== index));
-      })
-      .catch(error => console.error(error));
+  const handleDeletePaciente = async (nome: string) => {
+    try {
+      await axios.delete(`http://localhost:5228/Cliente/RemoverCliente?nome=${nome}`);
+      const updatedPacientes = pacientes.filter((p) => p.nome !== nome);
+      setPacientes(updatedPacientes);
+    } catch (error) {
+      console.error('Erro ao deletar paciente:', error);
+    }
   };
 
-  const handleViewDetalhes = (index: number) => {
-    setPacienteDetalhes(pacientes[index]);
+  const handleViewDetalhes = async (id: number) => {
+    try {
+      const response = await axios.get<Paciente[]>(`http://localhost:5228/Cliente/${id}`);
+      setPacienteDetalhes(response.data[0]);
+    } catch (error) {
+      console.error('Erro ao buscar detalhes do paciente:', error);
+    }
   };
 
   return (
     <div>
-      <NavBar />
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center mb-4 mt-5">
-          <h1 className="text-center flex-grow-1">Pacientes</h1>
-          <Button variant="success" onClick={() => setShowModal(true)}>
-            Adicionar Novo Paciente
-          </Button>
+      <h1>Pacientes</h1>
+      <button onClick={() => setShowModal(true)}>Adicionar Paciente</button>
+      {showModal && (
+        <div>
+          <h2>Novo Paciente</h2>
+          <input
+            type="text"
+            name="nome"
+            value={novoPaciente.nome}
+            onChange={handleInputChange}
+            placeholder="Nome"
+          />
+          <input
+            type="text"
+            name="telefone"
+            value={novoPaciente.telefone}
+            onChange={handleInputChange}
+            placeholder="Telefone"
+          />
+          <input
+            type="date"
+            name="dataDaConsulta"
+            value={novoPaciente.dataDaConsulta}
+            onChange={handleInputChange}
+            placeholder="Data da Consulta"
+          />
+          <button onClick={handleAddPaciente}>Salvar</button>
+          <button onClick={() => setShowModal(false)}>Cancelar</button>
         </div>
-
-        <PacientesTable
-          pacientes={pacientes}
-          onViewDetalhes={handleViewDetalhes}
-          onEditPaciente={handleEditPaciente}
-          onDeletePaciente={handleDeletePaciente}
-        />
-
-        <PacienteModal
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          paciente={novoPaciente}
-          onInputChange={handleInputChange}
-          onSave={handleAddPaciente}
-          isEditing={false}
-        />
-
-        <PacienteModal
-          show={showEditModal}
-          onHide={() => setShowEditModal(false)}
-          paciente={pacienteEditando || novoPaciente}
-          onInputChange={handleInputChange}
-          onSave={handleSaveEditPaciente}
-          isEditing={true}
-        />
-
-        <PacienteDetalhesModal
-          show={!!pacienteDetalhes}
-          onHide={() => setPacienteDetalhes(null)}
-          paciente={pacienteDetalhes}
-        />
-      </div>
+      )}
+      {showEditModal && pacienteEditando && (
+        <div>
+          <h2>Editar Paciente</h2>
+          <input
+            type="text"
+            name="nome"
+            value={pacienteEditando.nome}
+            onChange={handleInputChange}
+            placeholder="Nome"
+          />
+          <input
+            type="text"
+            name="telefone"
+            value={pacienteEditando.telefone}
+            onChange={handleInputChange}
+            placeholder="Telefone"
+          />
+          <input
+            type="date"
+            name="dataDaConsulta"
+            value={pacienteEditando.dataDaConsulta}
+            onChange={handleInputChange}
+            placeholder="Data da Consulta"
+          />
+          <button onClick={handleSaveEditPaciente}>Salvar</button>
+          <button onClick={() => setShowEditModal(false)}>Cancelar</button>
+        </div>
+      )}
+      <ul>
+        {pacientes.map((paciente, index) => (
+          <li key={index}>
+            {paciente.nome} - {paciente.telefone}
+            <button onClick={() => handleEditPaciente(index)}>Editar</button>
+            <button onClick={() => handleDeletePaciente(paciente.nome)}>Excluir</button>
+            <button onClick={() => handleViewDetalhes(index)}>Ver Detalhes</button>
+          </li>
+        ))}
+      </ul>
+      {pacienteDetalhes && (
+        <div>
+          <h2>Detalhes do Paciente</h2>
+          <p>Nome: {pacienteDetalhes.nome}</p>
+          <p>Telefone: {pacienteDetalhes.telefone}</p>
+          <p>Data da Consulta: {pacienteDetalhes.dataDaConsulta}</p>
+        </div>
+      )}
     </div>
   );
 };

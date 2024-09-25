@@ -45,8 +45,8 @@ const PacientePage: React.FC = () => {
       try {
         const response = await axios.get<Paciente[]>('http://localhost:5228/Cliente/TabelaSimples');
         setPacientes(response.data);
-      } catch (error) {
-        console.error('Erro ao buscar pacientes:', error);
+      } catch (error: any) {
+        console.error('Erro ao buscar pacientes:', error.message);
       }
     };
     fetchPacientes();
@@ -61,67 +61,6 @@ const PacientePage: React.FC = () => {
     }
   };
 
-  const handleAddPaciente = async () => {
-    try {
-      await axios.post('http://localhost:5228/Cliente/AdicionarCliente', novoPaciente);
-      setPacientes([...pacientes, novoPaciente]);
-      setNovoPaciente({
-        nome: '',
-        telefone: '',
-        dataDaConsulta: '',
-        categoria: 'Mensal',
-        valorDaSessao: 0,
-        quantidadeDeSessao: 0,
-        valorTotal: 0,
-        desconto: 0,
-        valorPago: 0,
-        vencimento: '',
-        situacaoFinanceira: '',
-      });
-      setShowModal(false);
-    } catch (error) {
-      console.error('Erro ao adicionar novo paciente:', error);
-    }
-  };
-
-  const handleEditPaciente = (index: number) => {
-    setEditIndex(index);
-    setPacienteEditando(pacientes[index]);
-    setShowEditModal(true);
-  };
-
-  const handleSaveEditPaciente = async () => {
-    if (editIndex !== null && pacienteEditando) {
-      try {
-        await axios.put(`http://localhost:5228/Cliente/AtualizarCliente?id=${pacientes[editIndex].nome}`, pacienteEditando);
-        const updatedPacientes = [...pacientes];
-        updatedPacientes[editIndex] = pacienteEditando;
-        setPacientes(updatedPacientes);
-        setShowEditModal(false);
-      } catch (error) {
-        console.error('Erro ao atualizar paciente:', error);
-      }
-    }
-  };
-
-  const handleDeletePaciente = async (nome: string) => {
-    try {
-      await axios.delete(`http://localhost:5228/Cliente/RemoverCliente?nome=${nome}`);
-      const updatedPacientes = pacientes.filter((p) => p.nome !== nome);
-      setPacientes(updatedPacientes);
-    } catch (error) {
-      console.error('Erro ao deletar paciente:', error);
-    }
-  };
-
-  const handleViewDetalhes = async (id: number) => {
-    try {
-      const response = await axios.get<Paciente[]>(`http://localhost:5228/Cliente/${id}`);
-      setPacienteDetalhes(response.data[0]);
-    } catch (error) {
-      console.error('Erro ao buscar detalhes do paciente:', error);
-    }
-  };
 
   return (
     <div>
