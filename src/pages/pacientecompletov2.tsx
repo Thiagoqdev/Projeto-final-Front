@@ -36,7 +36,7 @@ const PacientePage: React.FC = () => {
     nome: "",
     dataDaConsulta: "",
     telefone: "",
-    formaPagamento: "mensal",
+    formaPagamento: "sessao",
     categoria: "Sessão",
     valorDaSessao: 500,
     quantidadeDeSessao: 50,
@@ -97,13 +97,14 @@ const PacientePage: React.FC = () => {
         "http://localhost:5228/Cliente/AdicionarCliente",
         {
           ...novoPaciente,
+          valorTotal: "",
+          desconto: "",
+          valorPago: "",
           vencimento: novoPaciente.vencimento || "5",
           situacaoFinanceira: novoPaciente.situacaoFinanceira || "pendente",
           dataDoCadastro: new Date().toISOString(),
         }
       );
-
-
       console.log("Paciente adicionado:", response.data);
       setShowModalNovoPaciente(false);
       setNovoPaciente({
@@ -137,7 +138,6 @@ const PacientePage: React.FC = () => {
   };
 
   const handleEditClick = (paciente: Paciente) => {
-    debugger
     setPacienteEditando(paciente);
     setShowEditModal(true);
   };

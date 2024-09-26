@@ -36,7 +36,7 @@ const PacientePage: React.FC = () => {
     nome: "",
     dataDaConsulta: "",
     telefone: "",
-    formaPagamento: "mensal",
+    formaPagamento: "sessao",
     categoria: "Sessão",
     valorDaSessao: 500,
     quantidadeDeSessao: 50,
@@ -97,13 +97,14 @@ const PacientePage: React.FC = () => {
         "http://localhost:5228/Cliente/AdicionarCliente",
         {
           ...novoPaciente,
+          valorTotal: "",
+          desconto: "",
+          valorPago: "",
           vencimento: novoPaciente.vencimento || "5",
           situacaoFinanceira: novoPaciente.situacaoFinanceira || "pendente",
           dataDoCadastro: new Date().toISOString(),
         }
       );
-
-
       console.log("Paciente adicionado:", response.data);
       setShowModalNovoPaciente(false);
       setNovoPaciente({
@@ -112,20 +113,47 @@ const PacientePage: React.FC = () => {
         telefone: "",
         formaPagamento: "mensal",
       });
+
+  } catch (error) {
+    console.error("Erro ao adicionar paciente:", error);
+  }
+};
+
+  const handleDeletePaciente = async (index: number) => {
+    const paciente = pacientes[index];
+    if (!paciente || !paciente.nome) return;
+    
+    try {
+      await axios.delete(`http://localhost:5228/Cliente/RemoverCliente?nome=${paciente.nome}`);
+      const updatedPacientes = pacientes.filter((_, i) => i !== index);
+      setPacientes(updatedPacientes);
+      console.log("Paciente excluído:", paciente.nome);
     } catch (error) {
-      console.error("Erro ao adicionar paciente:", error);
+      console.error("Erro ao excluir paciente:", error);
     }
   };
 
   const handleEditPaciente = async () => {
     if (!pacienteEditando || !pacienteEditando.clienteId) return;
-
+  
     try {
       const response = await axios.put(
         `http://localhost:5228/Cliente/AtualizarCliente?id=${pacienteEditando.clienteId}`,
         {
-          ...pacienteEditando,
+          clienteId: pacienteEditando.clienteId,
+          nome: pacienteEditando.nome,
+          telefone: pacienteEditando.telefone,
+          dataDaConsulta: pacienteEditando.dataDaConsulta,
+          categoria: pacienteEditando.categoria || "mensal",
+          valorDaSessao: pacienteEditando.valorDaSessao || 0,
+          quantidadeDeSessao: pacienteEditando.quantidadeDeSessao || 0,
+          valorTotal: pacienteEditando.valorTotal || 0,
+          desconto: pacienteEditando.desconto || 0,
+          valorPago: pacienteEditando.valorPago || 0,
+          vencimento: pacienteEditando.vencimento || "8",
+          situacaoFinanceira: pacienteEditando.situacaoFinanceira || "pendente",
           ultimaAtualizacao: new Date().toISOString(),
+          dataDoCadastro: new Date().toISOString(),
         }
       );
       console.log("Paciente atualizado:", response.data);
@@ -136,16 +164,13 @@ const PacientePage: React.FC = () => {
     }
   };
 
+
+
   const handleEditClick = (paciente: Paciente) => {
-    debugger
     setPacienteEditando(paciente);
     setShowEditModal(true);
   };
 
-  const handleDeletePaciente = (index: number) => {
-    const updatedPacientes = pacientes.filter((_, i) => i !== index);
-    setPacientes(updatedPacientes);
-  };
 
   const handleViewDetalhes = (index: number) => {
     setPacienteDetalhes(pacientes[index]);
