@@ -8,7 +8,6 @@ interface Paciente {
   nome: string;
   dataDaConsulta: string;
   telefone: string;
-  formaPagamento: string;
   valorDaSessao?: number;
   categoria?: string;
   quantidadeDeSessao?: number;
@@ -36,7 +35,6 @@ const PacientePage: React.FC = () => {
     nome: "",
     dataDaConsulta: "",
     telefone: "",
-    formaPagamento: "mensal",
     categoria: "Sessão",
     valorDaSessao: 500,
     quantidadeDeSessao: 50,
@@ -54,24 +52,11 @@ const PacientePage: React.FC = () => {
     null
   );
 
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const response = await axios.get<Paciente[]>(
-          "http://localhost:5228/Cliente/TabelaSimples"
-        );
-        setPacientes(response.data);
-      } catch (error: any) {
-        console.error("Erro ao buscar pacientes:", error.message);
-      }
-    };
-    fetchPacientes();
-  }, []);
 
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
-        const response = await axios.get<Paciente[]>(
+        const response = await axios.get(
           "http://localhost:5228/Cliente/TabelaDetalhada"
         );
         setPacientes(response.data);
@@ -110,7 +95,7 @@ const PacientePage: React.FC = () => {
         nome: "",
         dataDaConsulta: "",
         telefone: "",
-        formaPagamento: "mensal",
+        categoria: "Mensal",
       });
     } catch (error) {
       console.error("Erro ao adicionar paciente:", error);
@@ -257,21 +242,21 @@ const PacientePage: React.FC = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label htmlFor="formaPagamento">
+                <Form.Label htmlFor="categoria">
                   Forma de Pagamento
                 </Form.Label>
                 <Form.Select
-                  id="formaPagamento"
-                  name="formaPagamento"
-                  value={novoPaciente.formaPagamento}
+                  id="categoria"
+                  name="categoria"
+                  value={novoPaciente.categoria}
                   onChange={handleInputChange}
                 >
-                  <option value="mensal">Mensal</option>
-                  <option value="sessao">Por Sessão</option>
+                  <option value="Mensal">Mensal</option>
+                  <option value="Sessão">Por Sessão</option>
                 </Form.Select>
               </Form.Group>
 
-              {novoPaciente.formaPagamento === "sessao" && (
+              {novoPaciente.categoria === "Sessão" && (
                 <>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="valorDaSessao">
@@ -312,7 +297,7 @@ const PacientePage: React.FC = () => {
                 </>
               )}
 
-              {novoPaciente.formaPagamento === "mensal" && (
+              {novoPaciente.categoria === "Mensal" && (
                 <>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="valorTotal">Valor Total</Form.Label>
@@ -398,7 +383,7 @@ const PacientePage: React.FC = () => {
                   nome: "",
                   dataDaConsulta: "",
                   telefone: "",
-                  formaPagamento: "mensal",
+                  categoria: "mensal",
                 })
               }
             >
@@ -453,21 +438,21 @@ const PacientePage: React.FC = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label htmlFor="edit-formaPagamento">
+                  <Form.Label htmlFor="edit-categoria">
                     Forma de Pagamento
                   </Form.Label>
                   <Form.Select
-                    id="edit-formaPagamento"
-                    name="formaPagamento"
-                    value={pacienteEditando.formaPagamento}
+                    id="edit-categoria"
+                    name="categoria"
+                    value={pacienteEditando.categoria}
                     onChange={handleInputChange}
                   >
-                    <option value="mensal">Mensal</option>
-                    <option value="sessao">Por Sessão</option>
+                    <option value="Mensal">Mensal</option>
+                    <option value="Sessão">Por Sessão</option>
                   </Form.Select>
                 </Form.Group>
 
-                {pacienteEditando.formaPagamento === "sessao" && (
+                {pacienteEditando.categoria === "Sessão" && (
                   <>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-valorDaSessao">
@@ -508,7 +493,7 @@ const PacientePage: React.FC = () => {
                   </>
                 )}
 
-                {pacienteEditando.formaPagamento === "mensal" && (
+                {pacienteEditando.categoria === "Mensal" && (
                   <>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-valorTotal">
