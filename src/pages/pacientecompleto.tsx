@@ -52,17 +52,18 @@ const PacientePage: React.FC = () => {
     null
   );
 
+  const fetchPacientes = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5228/Cliente/TabelaDetalhada"
+      );
+      setPacientes(response.data);
+    } catch (error: any) {
+      console.error("Erro ao buscar pacientes:", error.message);
+    }
+  };
+  
   useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const response = await axios.get(
-          "http://localhost:5228/Cliente/TabelaDetalhada"
-        );
-        setPacientes(response.data);
-      } catch (error: any) {
-        console.error("Erro ao buscar pacientes:", error.message);
-      }
-    };
     fetchPacientes();
   }, []);
 
@@ -95,6 +96,7 @@ const PacientePage: React.FC = () => {
         telefone: "",
         categoria: "Mensal",
       });
+      fetchPacientes();
     } catch (error) {
       console.error("Erro ao adicionar paciente:", error);
     }
@@ -113,7 +115,9 @@ const PacientePage: React.FC = () => {
       );
       console.log("Paciente atualizado:", response.data);
       setShowEditModal(false);
+      
       setPacienteEditando(null);
+      fetchPacientes();
     } catch (error) {
       console.error("Erro ao atualizar paciente:", error);
     }
@@ -128,6 +132,7 @@ const PacientePage: React.FC = () => {
       const updatedPacientes = pacientes.filter((_, i) => i !== index);
       setPacientes(updatedPacientes);
       console.log("Paciente excluído:", paciente.clienteId);
+      fetchPacientes();
     } catch (error) {
       console.error("Erro ao excluir paciente:", error);
     }
