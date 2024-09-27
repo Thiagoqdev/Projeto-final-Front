@@ -39,15 +39,14 @@ Você pode instalá-las usando o comando:
 npm install axios react react-bootstrap next typescript
 
 
-##Execução do Projeto
+## Execução do Projeto
 
 Para iniciar o servidor de desenvolvimento, execute:
 npm run dev
 
 
-#Funcionalidades
-
-Adicionar Paciente: Permite adicionar um novo paciente com informações como nome, data da consulta, telefone e detalhes financeiros.
-Editar Paciente: Permite editar as informações de um paciente existente.
-Visualizar Detalhes do Paciente: Exibe detalhes completos de um paciente.
-Excluir Paciente: Remove um paciente da lista.
+##Funcionalidades
+- **Adicionar Paciente:** Permite adicionar um novo paciente com informações como nome, data da consulta, telefone e detalhes financeiros.
+- **Editar Paciente:** Permite editar as informações de um paciente existente.
+- **Visualizar Detalhes do Paciente:** Exibe detalhes completos de um paciente.
+- **Excluir Paciente:** Remove um paciente da lista.
