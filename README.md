@@ -21,8 +21,9 @@ Certifique-se de ter o Node.js e o npm instalados em sua máquina.
    ```bash
    git clone https://github.com/Thiagoqdev/Projeto-final-Front.git
 
-  Navegue até o diretório do projeto:
-  cd Projeto-final-Front
+ 2. Navegue até o diretório do projeto:
+  
+   cd Projeto-final-Front
 
   Instale as dependências:
    npm install
