@@ -52,7 +52,6 @@ const PacientePage: React.FC = () => {
     null
   );
 
-
   useEffect(() => {
     const fetchPacientes = async () => {
       try {
@@ -88,7 +87,6 @@ const PacientePage: React.FC = () => {
         }
       );
 
-
       console.log("Paciente adicionado:", response.data);
       setShowModalNovoPaciente(false);
       setNovoPaciente({
@@ -122,7 +120,6 @@ const PacientePage: React.FC = () => {
   };
 
   const handleEditClick = (paciente: Paciente) => {
-    debugger
     setPacienteEditando(paciente);
     setShowEditModal(true);
   };
@@ -242,9 +239,7 @@ const PacientePage: React.FC = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label htmlFor="categoria">
-                  Forma de Pagamento
-                </Form.Label>
+                <Form.Label htmlFor="categoria">Forma de Pagamento</Form.Label>
                 <Form.Select
                   id="categoria"
                   name="categoria"
@@ -300,16 +295,6 @@ const PacientePage: React.FC = () => {
               {novoPaciente.categoria === "Mensal" && (
                 <>
                   <Form.Group className="mb-3">
-                    <Form.Label htmlFor="valorTotal">Valor Total</Form.Label>
-                    <Form.Control
-                      type="number"
-                      id="valorTotal"
-                      name="valorTotal"
-                      value={novoPaciente.valorTotal || ""}
-                      onChange={handleInputChange}
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
                     <Form.Label htmlFor="desconto">Desconto (%)</Form.Label>
                     <Form.Select
                       id="desconto"
@@ -325,21 +310,16 @@ const PacientePage: React.FC = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label htmlFor="quantidadeParcelas">
-                      Quantidade de Parcelas
+                    <Form.Label htmlFor="quantidadeDeSessao">
+                      Quantidade de Sessões
                     </Form.Label>
-                    <Form.Select
-                      id="quantidadeParcelas"
-                      name="quantidadeParcelas"
-                      value={novoPaciente.quantidadeParcelas || ""}
+                    <Form.Control
+                      type="number"
+                      id="quantidadeDeSessao"
+                      name="quantidadeDeSessao"
+                      value={novoPaciente.quantidadeDeSessao || ""}
                       onChange={handleInputChange}
-                    >
-                      {[...Array(12)].map((_, i) => (
-                        <option key={i} value={i + 1}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    />
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="vencimento">
@@ -496,18 +476,6 @@ const PacientePage: React.FC = () => {
                 {pacienteEditando.categoria === "Mensal" && (
                   <>
                     <Form.Group className="mb-3">
-                      <Form.Label htmlFor="edit-valorTotal">
-                        Valor Total
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        id="edit-valorTotal"
-                        name="valorTotal"
-                        value={pacienteEditando.valorTotal || ""}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Group>
-                    <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-desconto">
                         Desconto (%)
                       </Form.Label>
@@ -525,21 +493,16 @@ const PacientePage: React.FC = () => {
                       </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3">
-                      <Form.Label htmlFor="edit-quantidadeParcelas">
-                        Quantidade de Parcelas
+                      <Form.Label htmlFor="quantidadeDeSessao">
+                        Quantidade de Sessões
                       </Form.Label>
-                      <Form.Select
-                        id="edit-quantidadeParcelas"
-                        name="quantidadeParcelas"
-                        value={pacienteEditando.quantidadeParcelas || ""}
+                      <Form.Control
+                        type="number"
+                        id="quantidadeDeSessao"
+                        name="quantidadeDeSessao"
+                        value={novoPaciente.quantidadeDeSessao || ""}
                         onChange={handleInputChange}
-                      >
-                        {[...Array(12)].map((_, i) => (
-                          <option key={i} value={i + 1}>
-                            {i + 1}
-                          </option>
-                        ))}
-                      </Form.Select>
+                      />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-vencimento">

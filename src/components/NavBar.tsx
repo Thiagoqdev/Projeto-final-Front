@@ -24,16 +24,6 @@ const NavBar: React.FC = () => {
         <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
           <ul className="navbar-nav">
             <li className="nav-item">
-              <Link href="/" className="nav-link">
-                Início
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link href="/paciente" className="nav-link">
-                Pacientes
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link href="/login" className="nav-link">
                 Sair
               </Link>
