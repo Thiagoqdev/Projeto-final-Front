@@ -62,7 +62,7 @@ const PacientePage: React.FC = () => {
       console.error("Erro ao buscar pacientes:", error.message);
     }
   };
-  
+
   useEffect(() => {
     fetchPacientes();
   }, []);
@@ -115,7 +115,7 @@ const PacientePage: React.FC = () => {
       );
       console.log("Paciente atualizado:", response.data);
       setShowEditModal(false);
-      
+
       setPacienteEditando(null);
       fetchPacientes();
     } catch (error) {
@@ -126,9 +126,11 @@ const PacientePage: React.FC = () => {
   const handleDeletePaciente = async (index: number) => {
     const paciente = pacientes[index];
     if (!paciente || !paciente.clienteId) return;
-    
+
     try {
-      await axios.delete(`http://localhost:5228/Cliente/RemoverCliente?id=${paciente.clienteId}`);
+      await axios.delete(
+        `http://localhost:5228/Cliente/RemoverCliente?id=${paciente.clienteId}`
+      );
       const updatedPacientes = pacientes.filter((_, i) => i !== index);
       setPacientes(updatedPacientes);
       console.log("Paciente excluído:", paciente.clienteId);
@@ -142,7 +144,6 @@ const PacientePage: React.FC = () => {
     setPacienteEditando(paciente);
     setShowEditModal(true);
   };
-
 
   const handleViewDetalhes = (index: number) => {
     setPacienteDetalhes(pacientes[index]);
@@ -181,7 +182,24 @@ const PacientePage: React.FC = () => {
               >
                 <td>{paciente.nome}</td>
                 <td>{paciente.telefone}</td>
-                <td>{new Date(paciente.dataDaConsulta).toLocaleString()}</td>
+                <td>
+                  {new Date(paciente.dataDaConsulta).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }
+                  )}{" "}
+                  às{" "}
+                  {new Date(paciente.dataDaConsulta).toLocaleTimeString(
+                    "pt-BR",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
+                </td>
                 <td>
                   <Button
                     variant="info"
@@ -600,7 +618,22 @@ const PacientePage: React.FC = () => {
               </p>
               <p>
                 <strong>Data da Consulta:</strong>{" "}
-                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleDateString()}
+                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleDateString(
+                  "pt-BR",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }
+                )}{" "}
+                às{" "}
+                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleTimeString(
+                  "pt-BR",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )}
               </p>
               <p>
                 <strong>Categoria:</strong> {pacienteDetalhes.categoria}
@@ -614,17 +647,13 @@ const PacientePage: React.FC = () => {
                 {pacienteDetalhes.quantidadeDeSessao}
               </p>
               <p>
-                <strong>Valor Total:</strong>{" "}
-                {pacienteDetalhes.valorTotal}
+                <strong>Valor Total:</strong>R$ {pacienteDetalhes.valorTotal}
               </p>
               <p>
-                <strong>Desconto:</strong>{" "}
-                {pacienteDetalhes.desconto}
- 
+                <strong>Desconto:</strong> {pacienteDetalhes.desconto} %
               </p>
               <p>
-                <strong>Valor Pago:</strong>{" "}
-                {pacienteDetalhes.valorPago}
+                <strong>Valor Pago:</strong>R$ {pacienteDetalhes.valorPago}
               </p>
               <p>
                 <strong>Dia de Vencimento:</strong>{" "}
