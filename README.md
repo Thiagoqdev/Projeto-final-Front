@@ -27,13 +27,13 @@ Certifique-se de ter o Node.js e o npm instalados em sua máquina.
   Instale as dependências:
    npm install
 
-Dependências
+## Dependências
 Certifique-se de que as seguintes dependências estão instaladas:
-axios
-react
-react-bootstrap
-next
-typescript
+- **axios**
+- **react**
+- **react-bootstrap**
+- **next**
+- **typescript**
 
 Você pode instalá-las usando o comando: 
 npm install axios react react-bootstrap next typescript
@@ -41,11 +41,11 @@ npm install axios react react-bootstrap next typescript
 
 ## Execução do Projeto
 
-Para iniciar o servidor de desenvolvimento, execute:
+- **Para iniciar o servidor de desenvolvimento, execute:**
 npm run dev
 
 
-##Funcionalidades
+## Funcionalidades
 - **Adicionar Paciente:** Permite adicionar um novo paciente com informações como nome, data da consulta, telefone e detalhes financeiros.
 - **Editar Paciente:** Permite editar as informações de um paciente existente.
 - **Visualizar Detalhes do Paciente:** Exibe detalhes completos de um paciente.
