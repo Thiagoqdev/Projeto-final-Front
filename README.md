@@ -1,51 +1,40 @@
-# Projeto de Gestão de Pacientes
+This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-Este repositório contém o código-fonte de um sistema de gestão de pacientes. O sistema permite o cadastro, consulta e gerenciamento de informações de pacientes.
+## Getting Started
 
-## Requisitos
-
-- [Node.js](https://nodejs.org/) (versão 14 ou superior)
-- [npm](https://www.npmjs.com/)
-
-## Instalação
-
-### 1. Clonar o repositório
-
-Clone o repositório e acesse o diretório do projeto:
+First, run the development server:
 
 ```bash
-git clone https://github.com/Thiagoqdev/Projeto-final-Front.git
-
-
-2. Instalar as dependências
-Execute o comando abaixo para instalar as dependências do projeto:
-npm install
-
-3. Instalar o Bootstrap
-Este projeto utiliza o Bootstrap 5.3.3. Para instalar, execute:
-npm i bootstrap@5.3.3
-
-Executar o Projeto
-Após a instalação das dependências, você pode iniciar o servidor local com o seguinte comando:
 npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-O sistema estará disponível no seguinte endereço:
-Local: http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-Acessar o Sistema
-Login
-Após iniciar o servidor, acesse a URL principal para realizar o login:
-http://localhost:3000
+You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
 
-Página de Pacientes
-Depois de fazer o login, para acessar a área de gestão de pacientes, vá para a seguinte URL:
-http://localhost:3000/paciente
+[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
-Contribuições
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e enviar pull requests.
-Licença
-Este projeto está licenciado sob a MIT License.
+The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-  
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
+## Learn More
 
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.

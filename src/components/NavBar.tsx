@@ -1,16 +1,16 @@
-import React from 'react';
-import Link from 'next/link';
+import React from "react";
+import Link from "next/link";
 
 const NavBar: React.FC = () => {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark w-100" style={{ marginTop: 0 }}>
-      <div className="container-fluid p-0">
-        <Link href="/" className="navbar-brand ms-3">
-          Asoftware
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div className="container">
+        <Link href="/" className="navbar-brand d-flex align-items-center">
+          <span className="ms-2">Asoftware</span>
         </Link>
-        
+
         <button
-          className="navbar-toggler me-3"
+          className="navbar-toggler"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarNav"
@@ -21,18 +21,11 @@ const NavBar: React.FC = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse justify-content-end" id="navbarNav">
+        <div
+          className="collapse navbar-collapse justify-content-end"
+          id="navbarNav"
+        >
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <Link href="/" className="nav-link">
-                Início
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link href="/paciente" className="nav-link">
-                Pacientes
-              </Link>
-            </li>
             <li className="nav-item">
               <Link href="/login" className="nav-link">
                 Sair
