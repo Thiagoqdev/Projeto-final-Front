@@ -119,15 +119,25 @@ const PacientePage: React.FC = () => {
     }
   };
 
+  const handleDeletePaciente = async (index: number) => {
+    const paciente = pacientes[index];
+    if (!paciente || !paciente.clienteId) return;
+    
+    try {
+      await axios.delete(`http://localhost:5228/Cliente/RemoverCliente?id=${paciente.clienteId}`);
+      const updatedPacientes = pacientes.filter((_, i) => i !== index);
+      setPacientes(updatedPacientes);
+      console.log("Paciente excluído:", paciente.clienteId);
+    } catch (error) {
+      console.error("Erro ao excluir paciente:", error);
+    }
+  };
+
   const handleEditClick = (paciente: Paciente) => {
     setPacienteEditando(paciente);
     setShowEditModal(true);
   };
 
-  const handleDeletePaciente = (index: number) => {
-    const updatedPacientes = pacientes.filter((_, i) => i !== index);
-    setPacientes(updatedPacientes);
-  };
 
   const handleViewDetalhes = (index: number) => {
     setPacienteDetalhes(pacientes[index]);
