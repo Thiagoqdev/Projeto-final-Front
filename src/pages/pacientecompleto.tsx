@@ -602,9 +602,7 @@ const PacientePage: React.FC = () => {
               </p>
               <p>
                 <strong>Valor da Sessão:</strong> R${" "}
-                {pacienteDetalhes.valorDaSessao !== undefined
-                  ? pacienteDetalhes.valorDaSessao.toFixed(2)
-                  : "N/A"}
+                {pacienteDetalhes.valorDaSessao}
               </p>
               <p>
                 <strong>Quantidade de Sessões:</strong>{" "}
@@ -612,21 +610,16 @@ const PacientePage: React.FC = () => {
               </p>
               <p>
                 <strong>Valor Total:</strong>{" "}
-                {pacienteDetalhes.valorTotal !== undefined
-                  ? pacienteDetalhes.valorTotal.toFixed(2)
-                  : "N/A"}
+                {pacienteDetalhes.valorTotal}
               </p>
               <p>
                 <strong>Desconto:</strong>{" "}
-                {pacienteDetalhes.desconto
-                  ? (pacienteDetalhes.desconto * 100).toFixed(0) + "%"
-                  : "0%"}
+                {pacienteDetalhes.desconto}
+ 
               </p>
               <p>
                 <strong>Valor Pago:</strong>{" "}
-                {pacienteDetalhes.valorPago !== undefined
-                  ? pacienteDetalhes.valorPago.toFixed(2)
-                  : "N/A"}
+                {pacienteDetalhes.valorPago}
               </p>
               <p>
                 <strong>Dia de Vencimento:</strong>{" "}
