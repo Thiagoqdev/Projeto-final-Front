@@ -25,7 +25,7 @@ Certifique-se de ter o Node.js e o npm instalados em sua máquina.
   
    cd Projeto-final-Front
 
-  Instale as dependências:
+  3. Instale as dependências:
    npm install
 
 ## Dependências
