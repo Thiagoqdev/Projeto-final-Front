@@ -310,6 +310,18 @@ const PacientePage: React.FC = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
+                    <Form.Label htmlFor="valorDaSessao">
+                      Valor da Sessão
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      id="valorDaSessao"
+                      name="valorDaSessao"
+                      value={novoPaciente.valorDaSessao || ""}
+                      onChange={handleInputChange}
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
                     <Form.Label htmlFor="quantidadeDeSessao">
                       Quantidade de Sessões
                     </Form.Label>
@@ -491,6 +503,18 @@ const PacientePage: React.FC = () => {
                           </option>
                         ))}
                       </Form.Select>
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label htmlFor="valorDaSessao">
+                        Valor da Sessão
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        id="valorDaSessao"
+                        name="valorDaSessao"
+                        value={novoPaciente.valorDaSessao || ""}
+                        onChange={handleInputChange}
+                      />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="quantidadeDeSessao">
