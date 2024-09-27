@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { Modal, Button, Form, Table } from "react-bootstrap";
 import NavBar from "../components/NavBar";
 import axios from "axios";
+import Footer from "@/components/footer";
 
 interface Paciente {
   clienteId?: number;
   nome: string;
   dataDaConsulta: string;
   telefone: string;
-  formaPagamento: string;
   valorDaSessao?: number;
   categoria?: string;
   quantidadeDeSessao?: number;
@@ -36,14 +36,13 @@ const PacientePage: React.FC = () => {
     nome: "",
     dataDaConsulta: "",
     telefone: "",
-    formaPagamento: "sessao",
     categoria: "Sessão",
-    valorDaSessao: 500,
-    quantidadeDeSessao: 50,
+    valorDaSessao: 0,
+    quantidadeDeSessao: 0,
     valorTotal: 0,
     desconto: 0,
     valorPago: 0,
-    vencimento: "15",
+    vencimento: "",
     situacaoFinanceira: "pago",
   });
   const [pacienteEditando, setPacienteEditando] = useState<Paciente | null>(
@@ -54,31 +53,18 @@ const PacientePage: React.FC = () => {
     null
   );
 
-  useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const response = await axios.get<Paciente[]>(
-          "http://localhost:5228/Cliente/TabelaSimples"
-        );
-        setPacientes(response.data);
-      } catch (error: any) {
-        console.error("Erro ao buscar pacientes:", error.message);
-      }
-    };
-    fetchPacientes();
-  }, []);
+  const fetchPacientes = async () => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5228/Cliente/TabelaDetalhada"
+      );
+      setPacientes(response.data);
+    } catch (error: any) {
+      console.error("Erro ao buscar pacientes:", error.message);
+    }
+  };
 
   useEffect(() => {
-    const fetchPacientes = async () => {
-      try {
-        const response = await axios.get<Paciente[]>(
-          "http://localhost:5228/Cliente/TabelaDetalhada"
-        );
-        setPacientes(response.data);
-      } catch (error: any) {
-        console.error("Erro ao buscar pacientes:", error.message);
-      }
-    };
     fetchPacientes();
   }, []);
 
@@ -97,22 +83,21 @@ const PacientePage: React.FC = () => {
         "http://localhost:5228/Cliente/AdicionarCliente",
         {
           ...novoPaciente,
-          valorTotal: "",
-          desconto: "",
-          valorPago: "",
           vencimento: novoPaciente.vencimento || "5",
           situacaoFinanceira: novoPaciente.situacaoFinanceira || "pendente",
           dataDoCadastro: new Date().toISOString(),
         }
       );
+
       console.log("Paciente adicionado:", response.data);
       setShowModalNovoPaciente(false);
       setNovoPaciente({
         nome: "",
         dataDaConsulta: "",
         telefone: "",
-        formaPagamento: "mensal",
+        categoria: "Mensal",
       });
+      fetchPacientes();
     } catch (error) {
       console.error("Erro ao adicionar paciente:", error);
     }
@@ -131,20 +116,34 @@ const PacientePage: React.FC = () => {
       );
       console.log("Paciente atualizado:", response.data);
       setShowEditModal(false);
+
       setPacienteEditando(null);
+      fetchPacientes();
     } catch (error) {
       console.error("Erro ao atualizar paciente:", error);
+    }
+  };
+
+  const handleDeletePaciente = async (index: number) => {
+    const paciente = pacientes[index];
+    if (!paciente || !paciente.clienteId) return;
+
+    try {
+      await axios.delete(
+        `http://localhost:5228/Cliente/RemoverCliente?id=${paciente.clienteId}`
+      );
+      const updatedPacientes = pacientes.filter((_, i) => i !== index);
+      setPacientes(updatedPacientes);
+      console.log("Paciente excluído:", paciente.clienteId);
+      fetchPacientes();
+    } catch (error) {
+      console.error("Erro ao excluir paciente:", error);
     }
   };
 
   const handleEditClick = (paciente: Paciente) => {
     setPacienteEditando(paciente);
     setShowEditModal(true);
-  };
-
-  const handleDeletePaciente = (index: number) => {
-    const updatedPacientes = pacientes.filter((_, i) => i !== index);
-    setPacientes(updatedPacientes);
   };
 
   const handleViewDetalhes = (index: number) => {
@@ -184,7 +183,24 @@ const PacientePage: React.FC = () => {
               >
                 <td>{paciente.nome}</td>
                 <td>{paciente.telefone}</td>
-                <td>{new Date(paciente.dataDaConsulta).toLocaleString()}</td>
+                <td>
+                  {new Date(paciente.dataDaConsulta).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }
+                  )}{" "}
+                  às{" "}
+                  {new Date(paciente.dataDaConsulta).toLocaleTimeString(
+                    "pt-BR",
+                    {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    }
+                  )}
+                </td>
                 <td>
                   <Button
                     variant="info"
@@ -257,21 +273,19 @@ const PacientePage: React.FC = () => {
                 />
               </Form.Group>
               <Form.Group className="mb-3">
-                <Form.Label htmlFor="formaPagamento">
-                  Forma de Pagamento
-                </Form.Label>
+                <Form.Label htmlFor="categoria">Forma de Pagamento</Form.Label>
                 <Form.Select
-                  id="formaPagamento"
-                  name="formaPagamento"
-                  value={novoPaciente.formaPagamento}
+                  id="categoria"
+                  name="categoria"
+                  value={novoPaciente.categoria}
                   onChange={handleInputChange}
                 >
-                  <option value="mensal">Mensal</option>
-                  <option value="sessao">Por Sessão</option>
+                  <option value="Mensal">Mensal</option>
+                  <option value="Sessão">Por Sessão</option>
                 </Form.Select>
               </Form.Group>
 
-              {novoPaciente.formaPagamento === "sessao" && (
+              {novoPaciente.categoria === "Sessão" && (
                 <>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="valorDaSessao">
@@ -312,18 +326,8 @@ const PacientePage: React.FC = () => {
                 </>
               )}
 
-              {novoPaciente.formaPagamento === "mensal" && (
+              {novoPaciente.categoria === "Mensal" && (
                 <>
-                  <Form.Group className="mb-3">
-                    <Form.Label htmlFor="valorTotal">Valor Total</Form.Label>
-                    <Form.Control
-                      type="number"
-                      id="valorTotal"
-                      name="valorTotal"
-                      value={novoPaciente.valorTotal || ""}
-                      onChange={handleInputChange}
-                    />
-                  </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="desconto">Desconto (%)</Form.Label>
                     <Form.Select
@@ -340,21 +344,28 @@ const PacientePage: React.FC = () => {
                     </Form.Select>
                   </Form.Group>
                   <Form.Group className="mb-3">
-                    <Form.Label htmlFor="quantidadeParcelas">
-                      Quantidade de Parcelas
+                    <Form.Label htmlFor="valorDaSessao">
+                      Valor da Sessão
                     </Form.Label>
-                    <Form.Select
-                      id="quantidadeParcelas"
-                      name="quantidadeParcelas"
-                      value={novoPaciente.quantidadeParcelas || ""}
+                    <Form.Control
+                      type="number"
+                      id="valorDaSessao"
+                      name="valorDaSessao"
+                      value={novoPaciente.valorDaSessao || ""}
                       onChange={handleInputChange}
-                    >
-                      {[...Array(12)].map((_, i) => (
-                        <option key={i} value={i + 1}>
-                          {i + 1}
-                        </option>
-                      ))}
-                    </Form.Select>
+                    />
+                  </Form.Group>
+                  <Form.Group className="mb-3">
+                    <Form.Label htmlFor="quantidadeDeSessao">
+                      Quantidade de Sessões
+                    </Form.Label>
+                    <Form.Control
+                      type="number"
+                      id="quantidadeDeSessao"
+                      name="quantidadeDeSessao"
+                      value={novoPaciente.quantidadeDeSessao || ""}
+                      onChange={handleInputChange}
+                    />
                   </Form.Group>
                   <Form.Group className="mb-3">
                     <Form.Label htmlFor="vencimento">
@@ -398,7 +409,7 @@ const PacientePage: React.FC = () => {
                   nome: "",
                   dataDaConsulta: "",
                   telefone: "",
-                  formaPagamento: "mensal",
+                  categoria: "mensal",
                 })
               }
             >
@@ -453,21 +464,21 @@ const PacientePage: React.FC = () => {
                   />
                 </Form.Group>
                 <Form.Group className="mb-3">
-                  <Form.Label htmlFor="edit-formaPagamento">
+                  <Form.Label htmlFor="edit-categoria">
                     Forma de Pagamento
                   </Form.Label>
                   <Form.Select
-                    id="edit-formaPagamento"
-                    name="formaPagamento"
-                    value={pacienteEditando.formaPagamento}
+                    id="edit-categoria"
+                    name="categoria"
+                    value={pacienteEditando.categoria}
                     onChange={handleInputChange}
                   >
-                    <option value="mensal">Mensal</option>
-                    <option value="sessao">Por Sessão</option>
+                    <option value="Mensal">Mensal</option>
+                    <option value="Sessão">Por Sessão</option>
                   </Form.Select>
                 </Form.Group>
 
-                {pacienteEditando.formaPagamento === "sessao" && (
+                {pacienteEditando.categoria === "Sessão" && (
                   <>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-valorDaSessao">
@@ -508,20 +519,8 @@ const PacientePage: React.FC = () => {
                   </>
                 )}
 
-                {pacienteEditando.formaPagamento === "mensal" && (
+                {pacienteEditando.categoria === "Mensal" && (
                   <>
-                    <Form.Group className="mb-3">
-                      <Form.Label htmlFor="edit-valorTotal">
-                        Valor Total
-                      </Form.Label>
-                      <Form.Control
-                        type="number"
-                        id="edit-valorTotal"
-                        name="valorTotal"
-                        value={pacienteEditando.valorTotal || ""}
-                        onChange={handleInputChange}
-                      />
-                    </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-desconto">
                         Desconto (%)
@@ -540,21 +539,28 @@ const PacientePage: React.FC = () => {
                       </Form.Select>
                     </Form.Group>
                     <Form.Group className="mb-3">
-                      <Form.Label htmlFor="edit-quantidadeParcelas">
-                        Quantidade de Parcelas
+                      <Form.Label htmlFor="valorDaSessao">
+                        Valor da Sessão
                       </Form.Label>
-                      <Form.Select
-                        id="edit-quantidadeParcelas"
-                        name="quantidadeParcelas"
-                        value={pacienteEditando.quantidadeParcelas || ""}
+                      <Form.Control
+                        type="number"
+                        id="valorDaSessao"
+                        name="valorDaSessao"
+                        value={pacienteEditando.valorDaSessao || ""}
                         onChange={handleInputChange}
-                      >
-                        {[...Array(12)].map((_, i) => (
-                          <option key={i} value={i + 1}>
-                            {i + 1}
-                          </option>
-                        ))}
-                      </Form.Select>
+                      />
+                    </Form.Group>
+                    <Form.Group className="mb-3">
+                      <Form.Label htmlFor="quantidadeDeSessao">
+                        Quantidade de Sessões
+                      </Form.Label>
+                      <Form.Control
+                        type="number"
+                        id="quantidadeDeSessao"
+                        name="quantidadeDeSessao"
+                        value={pacienteEditando.quantidadeDeSessao || ""}
+                        onChange={handleInputChange}
+                      />
                     </Form.Group>
                     <Form.Group className="mb-3">
                       <Form.Label htmlFor="edit-vencimento">
@@ -613,38 +619,42 @@ const PacientePage: React.FC = () => {
               </p>
               <p>
                 <strong>Data da Consulta:</strong>{" "}
-                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleDateString()}
+                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleDateString(
+                  "pt-BR",
+                  {
+                    day: "2-digit",
+                    month: "2-digit",
+                    year: "numeric",
+                  }
+                )}{" "}
+                às{" "}
+                {new Date(pacienteDetalhes.dataDaConsulta).toLocaleTimeString(
+                  "pt-BR",
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  }
+                )}
               </p>
               <p>
                 <strong>Categoria:</strong> {pacienteDetalhes.categoria}
               </p>
               <p>
                 <strong>Valor da Sessão:</strong> R${" "}
-                {pacienteDetalhes.valorDaSessao !== undefined
-                  ? pacienteDetalhes.valorDaSessao.toFixed(2)
-                  : "N/A"}
+                {pacienteDetalhes.valorDaSessao}
               </p>
               <p>
                 <strong>Quantidade de Sessões:</strong>{" "}
                 {pacienteDetalhes.quantidadeDeSessao}
               </p>
               <p>
-                <strong>Valor Total:</strong>{" "}
-                {pacienteDetalhes.valorTotal !== undefined
-                  ? pacienteDetalhes.valorTotal.toFixed(2)
-                  : "N/A"}
+                <strong>Valor Total:</strong>R$ {pacienteDetalhes.valorTotal}
               </p>
               <p>
-                <strong>Desconto:</strong>{" "}
-                {pacienteDetalhes.desconto
-                  ? (pacienteDetalhes.desconto * 100).toFixed(0) + "%"
-                  : "0%"}
+                <strong>Desconto:</strong> {pacienteDetalhes.desconto} %
               </p>
               <p>
-                <strong>Valor Pago:</strong>{" "}
-                {pacienteDetalhes.valorPago !== undefined
-                  ? pacienteDetalhes.valorPago.toFixed(2)
-                  : "N/A"}
+                <strong>Valor Pago:</strong>R$ {pacienteDetalhes.valorPago}
               </p>
               <p>
                 <strong>Dia de Vencimento:</strong>{" "}
@@ -666,6 +676,7 @@ const PacientePage: React.FC = () => {
           </Modal>
         )}
       </div>
+      <Footer />
     </div>
   );
 };
