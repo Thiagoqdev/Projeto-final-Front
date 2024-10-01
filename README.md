@@ -27,9 +27,9 @@ Certifique-se de ter o Node.js e o npm instalados em sua máquina.
    cd Projeto-final-Front
 
 3. Instale as dependências:
-   npm install
-   npm i bootstrap@5.3.3
-   npm install axios
+   - npm install
+   - npm i bootstrap@5.3.3
+   - npm install axios
 
 ## Dependências
 Certifique-se de que as seguintes dependências estão instaladas:
